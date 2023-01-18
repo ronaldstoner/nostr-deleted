@@ -17,10 +17,10 @@ import datetime
 #relay = "wss://brb.io"
 #relay = "wss://nostr.bitcoiner.social"
 #relay = "wss://relay.stoner.com"
-relay = "wss://nostr.fmt.wiz.biz"
+#relay = "wss://nostr.fmt.wiz.biz"
 #relay = "wss://relay.nostr.bg"
 #relay = "wss://relay.damus.io"
-#relay = "wss://relay.snort.social"
+relay = "wss://relay.snort.social"
 
 async def connect_to_relay():
     print("Connecting to websocket...")
