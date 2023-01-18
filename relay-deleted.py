@@ -15,9 +15,9 @@ import datetime
 
 # Different relays may give different results. Some timeout, some loop, some keep alive.
 #relay = "wss://brb.io"
-#relay = "wss://nostr.rocks"
+relay = "wss://nostr.rocks"
 #relay = "wss://nostr.bitcoiner.social"
-relay = "wss://relay.stoner.com"
+#relay = "wss://relay.stoner.com"
 #relay = "wss://nostr.fmt.wiz.biz"
 #relay = "wss://relay.nostr.bg"
 #relay = "wss://relay.damus.io"
@@ -67,8 +67,9 @@ async def handle_event(event, original_event):
         print(f"Deleted Event ID:    {original_event[2]['id']}")
         print(f"Deleted Content:     {original_event[2]['content']}\n")
 
-loop = asyncio.get_event_loop()
-loop.run_until_complete(connect_to_relay())
-websocket.close()
-print(f"Connection closed to {relay}")
-
+if __name__ == "__main__":
+    while True:
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(connect_to_relay())
+    websocket.close()
+    print(f"Connection closed to {relay}")
