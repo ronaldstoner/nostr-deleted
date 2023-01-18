@@ -2,7 +2,7 @@
 A script to pull and parse deleted nostr messages from relays 
 
 # Screenshot
-<img src="https://github.com/ronaldstoner/nostr-deleted/blob/main/images/example.png?raw-true" alt="A text console showing deleted events and the correlated event content" width="400"> 
+<img src="https://github.com/ronaldstoner/nostr-deleted/blob/main/images/example.png?raw=true" alt="A text console showing deleted events and the correlated event content" width="500">
 
 # Note
 Different relay software may store, process, and return deletion events in different ways. Reply schemas have not yet been created for different relayer software.
