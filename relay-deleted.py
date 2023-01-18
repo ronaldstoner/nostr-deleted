@@ -15,17 +15,18 @@ import datetime
 
 # Different relays may give different results. Some timeout, some loop, some keep alive.
 #relay = "wss://brb.io"
+#relay = "wss://nostr.rocks"
 #relay = "wss://nostr.bitcoiner.social"
-#relay = "wss://relay.stoner.com"
+relay = "wss://relay.stoner.com"
 #relay = "wss://nostr.fmt.wiz.biz"
 #relay = "wss://relay.nostr.bg"
 #relay = "wss://relay.damus.io"
-relay = "wss://relay.snort.social"
+#relay = "wss://relay.snort.social"
 
 async def connect_to_relay():
     print("Connecting to websocket...")
     async with websockets.connect(relay, ping_interval=30) as websocket:
-        print("Connected to", relay)
+        print(f"Connected to {relay}")
 
         # Send a REQ message to subscribe to deletion events
         print("Subscribing to event types = 5")
@@ -33,7 +34,10 @@ async def connect_to_relay():
 
         original_events = {}
         while True:
-            event = json.loads(await websocket.recv())
+            try:
+                event = json.loads(await websocket.recv())
+            except asyncio.IncompleteReadError as e:
+                event = e.partial
             if event[0] == "EVENT" and event[2]["kind"] == 5:
                 content = event[2]
                 for tag in content["tags"]:
@@ -50,21 +54,21 @@ async def connect_to_relay():
 
 async def handle_event(event, original_event):
     if original_event[2]["content"] != "":
+
         print("---TYPE 5 DELETE EVENT---")
-        print("Author:              ", event[2]["pubkey"])
-        print("Time:                ", datetime.datetime.fromtimestamp(event[2]["created_at"]).strftime('%Y-%m-%d %H:%M:%S'))
-        print("Type 5 Event ID:     ", event[2]["id"])
-        print("Deletion Reason:     ", event[2]["content"])
-        print("Requested Delete ID: ", original_event[2]["id"])
+        print(f"Author:              {event[2]['pubkey']}")
+        print(f"Time:                {datetime.datetime.fromtimestamp(event[2]['created_at']).strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"Type 5 Event ID:     {event[2]['id']}")
+        print(f"Deletion Reason:     {event[2]['content']}")
+        print(f"Requested Delete ID: {original_event[2]['id']}")
         print("---ORIGINAL EVENT---")
-        print("Author:              ", original_event[2]["pubkey"])
-        print("Time:                ", datetime.datetime.fromtimestamp(original_event[2]["created_at"]).strftime('%Y-%m-%d %H:%M:%S'))
-        print("Deleted Event ID:    ", original_event[2]["id"])
-        print("Deleted Content:     ", original_event[2]["content"])
-        print("\n")
+        print(f"Author:              {original_event[2]['pubkey']}")
+        print(f"Time:                {datetime.datetime.fromtimestamp(original_event[2]['created_at']).strftime('%Y-%m-%d %H:%M:%S')}")
+        print(f"Deleted Event ID:    {original_event[2]['id']}")
+        print(f"Deleted Content:     {original_event[2]['content']}\n")
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(connect_to_relay())
 websocket.close()
-print("Connection closed to", relay)
+print(f"Connection closed to {relay}")
 
