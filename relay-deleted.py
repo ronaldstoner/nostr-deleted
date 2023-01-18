@@ -15,10 +15,10 @@ import datetime
 
 # Different relays may give different results. Some timeout, some loop, some keep alive.
 #relay = "wss://brb.io"
-relay = "wss://nostr.rocks"
+#relay = "wss://nostr.rocks"
 #relay = "wss://nostr.bitcoiner.social"
 #relay = "wss://relay.stoner.com"
-#relay = "wss://nostr.fmt.wiz.biz"
+relay = "wss://nostr.fmt.wiz.biz"
 #relay = "wss://relay.nostr.bg"
 #relay = "wss://relay.damus.io"
 #relay = "wss://relay.snort.social"
@@ -39,6 +39,7 @@ async def connect_to_relay():
             except asyncio.IncompleteReadError as e:
                 event = e.partial
             if event[0] == "EVENT" and event[2]["kind"] == 5:
+                #print(event)
                 content = event[2]
                 for tag in content["tags"]:
                     if tag[0] == "e":
@@ -48,6 +49,7 @@ async def connect_to_relay():
                                 await websocket.send(json.dumps(["REQ", "subscription_id", {"id": [original_event_hash]}]))
                                 original_event = json.loads(await websocket.recv())
                                 original_events[original_event_hash] = original_event
+                                #print(original_event)
                             except:
                                 print("Cannot find deleted event")
                         await handle_event(event, original_events[original_event_hash])
@@ -68,8 +70,9 @@ async def handle_event(event, original_event):
         print(f"Deleted Content:     {original_event[2]['content']}\n")
 
 if __name__ == "__main__":
-    while True:
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(connect_to_relay())
-    websocket.close()
-    print(f"Connection closed to {relay}")
+    try:
+        asyncio.run(connect_to_relay())
+        websockets.close()
+        print("The script has finished.")
+    except Exception as e:
+        print(f"Exception: {e}\nThe script has finished.")
